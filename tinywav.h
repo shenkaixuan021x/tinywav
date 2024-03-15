@@ -63,7 +63,8 @@ typedef struct TinyWav {
   int32_t numFramesInHeader; ///< number of samples per channel declared in wav header (only populated when reading)
   uint32_t totalFramesReadWritten; ///< total numSamples per channel which have been read or written
   TinyWavChannelFormat chanFmt;
-  TinyWavSampleFormat sampFmt;
+  TinyWavSampleFormat fileSampFmt;
+  TinyWavSampleFormat dataSampFmt;
 } TinyWav;
 
 /**
@@ -71,26 +72,34 @@ typedef struct TinyWav {
  *
  * @param numChannels  The number of channels to write.
  * @param samplerate   The sample rate of the audio.
- * @param sampFmt      The sample format (e.g. 16-bit integer or 32-bit float) to be used in the file.
+ * @param fileSampFmt  The sample format (e.g. 16-bit integer or 32-bit float) to be used in the file.
+ * @param dataSampFmt  The sample format (e.g. 16-bit integer or 32-bit float) to be used in the data.
  * @param chanFmt      The channel format (how the channel data is layed out in memory)
  * @param path         The path of the file to write to. The file will be overwritten.
  *
  * @return  The error code. Zero if no error.
  */
 int tinywav_open_write(TinyWav *tw,
-    int16_t numChannels, int32_t samplerate,
-    TinyWavSampleFormat sampFmt, TinyWavChannelFormat chanFmt,
-    const char *path);
+                       int16_t numChannels,
+                       int32_t samplerate,
+                       TinyWavSampleFormat fileSampFmt,
+                       TinyWavSampleFormat dataSampFmt,
+                       TinyWavChannelFormat chanFmt,
+                       const char *path);
 
 /**
  * Open a file for reading.
  *
- * @param path     The path of the file to read.
- * @param chanFmt  The desired channel format (how the channel data is layed out in memory) when read.
+ * @param path          The path of the file to read.
+ * @param dataSampFmt   The sample format (e.g. 16-bit integer or 32-bit float) to be used in the data.
+ * @param chanFmt       The desired channel format (how the channel data is layed out in memory) when read.
  *
  * @return  The error code. Zero if no error.
  */
-int tinywav_open_read(TinyWav *tw, const char *path, TinyWavChannelFormat chanFmt);
+int tinywav_open_read(TinyWav *tw,
+                      const char *path,
+                      TinyWavSampleFormat dataSampFmt,
+                      TinyWavChannelFormat chanFmt);
 
 /**
  * Read sample data from the file.
